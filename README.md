@@ -1,6 +1,6 @@
 # QuarterLang-Pyrus-Edition
 
-## # QuarterLang (Pyrus Edition) Spec Sheet & Overview
+## QuarterLang (Pyrus Edition) Spec Sheet & Overview
 
 ---
 
