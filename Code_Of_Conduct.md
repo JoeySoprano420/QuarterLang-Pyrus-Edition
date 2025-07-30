@@ -1,3 +1,7 @@
+## 🔹Summary
+
+**----**
+
 **QuarterLang (Pyrus Edition)** is a general-purpose, systems-level programming language designed with a hyper-readable English-like syntax. It fuses **functional**, **imperative**, and **itemized** paradigms, enabling both high-level abstraction and low-level control. QuarterLang compiles **Ahead-Of-Time (AOT)** into native binaries, supports a **toggleable JIT**, and embeds **inline NASM** for ultimate control.
 
 It introduces **Capsules**—self-contained execution bundles that combine source code, metadata, and **Dodecagram (DG)** base-12 annotations—for high-performance, traceable execution across **bare-metal**, **FPGA**, **WebAssembly**, and **modular OS environments**.
