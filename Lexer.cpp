@@ -214,3 +214,11 @@ int main() {
 
     return 0;
 }
+
+const std::unordered_map<std::string, std::string> emojiKeywordMap = {
+    {"👑", "leader"},
+    {"🐍", "venom"},
+    {"🌀", "spiral"},
+    {"🛡️", "shield"},
+};
+
