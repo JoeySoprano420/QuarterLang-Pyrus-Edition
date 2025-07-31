@@ -89,7 +89,8 @@ public:
         size_t start = pos; int startCol = col;
         pos += 2; col += 2;
         while (pos + 1 < source.size() && !(source[pos] == '*' && source[pos + 1] == '/')) {
-            if (source[pos] == '\n') { ++line; col = 1; } else ++col;
+            if (source[pos] == '\n') { ++line; col = 1; }
+            else ++col;
             ++pos;
         }
         pos += 2; col += 2;
@@ -138,7 +139,8 @@ public:
 private:
     char peek() const { return pos + 1 < source.size() ? source[pos + 1] : '\0'; }
     void advance(bool newline = false) {
-        if (newline) { ++line; col = 1; } else ++col;
+        if (newline) { ++line; col = 1; }
+        else ++col;
         ++pos;
     }
 };
@@ -198,3 +200,4 @@ int main() {
     runREPL();
     return 0;
 }
+
