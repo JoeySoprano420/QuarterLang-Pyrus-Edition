@@ -288,3 +288,119 @@ asm_body:
 DG_LITERAL_PATTERN = /dg:([0-9A-B]+)/i
 
 # --- End of ruleset ---
+
+<> --- Optimizations --- <>
+
+# --- Compiler Optimization Guidelines & Rules ---
+
+# Optimization Passes to Integrate into the QuarterLang-Pyrus Compilation Pipeline
+
+optimization:
+  - name: "Symbolic Constant Folding"
+    description: |
+      Precompute constant expressions at compile time, especially DG
+      arithmetic like `dg:3A + dg:1B`. Reduces runtime computation overhead.
+    benefit: "Reduces symbolic arithmetic overhead by 10-20%"
+    enabled: true
+
+  - name: "Capsule Pruning"
+    description: |
+      Remove redundant or unreachable instructions from emitted bytecode.
+      Improves capsule size and runtime efficiency.
+    benefit: "Shrinks bytecode size and improves cache locality by 5-15%"
+    enabled: true
+
+  - name: "Opcode Density Profiling"
+    description: |
+      Analyze execution traces to identify hotspots and
+      optimize high-frequency opcode paths dynamically.
+    benefit: "Targets high-frequency paths for tuning, improving performance 10-30%"
+    enabled: true
+
+  - name: "Entropy-Aware Execution"
+    description: |
+      Prioritize execution of low-entropy, predictable paths in capsules.
+      Improves dispatch speed and enhances traceability.
+    benefit: "Enhances dispatch predictability and opcode trace quality"
+    enabled: true
+
+  - name: "Inline Function Expansion"
+    description: |
+      Expand anonymous and small named functions (`fn`) inline
+      at call sites to reduce function call overhead.
+    benefit: "Reduces call overhead, especially in fn expressions by 5-20%"
+    enabled: true
+
+  - name: "Thread Scheduling Optimization"
+    description: |
+      Balance and schedule parallel threads efficiently across CPU cores.
+      Dynamically adapt thread workload to optimize resource utilization.
+    benefit: "Improves parallelism and resource utilization by 2×–4×"
+    enabled: true
+
+  - name: "DG Arithmetic Simplification"
+    description: |
+      Simplify symbolic DG arithmetic expressions before runtime
+      using algebraic reduction rules for base-12 numbers.
+    benefit: "Reduces runtime DG expression complexity and instruction count"
+    enabled: true
+
+  - name: "REPL Trace Caching"
+    description: |
+      Cache opcode execution traces during REPL sessions to
+      accelerate debugging and interactive feedback loops.
+    benefit: "Speeds up debugging cycles by reusing prior opcode traces"
+    enabled: true
+
+  - name: "Signature-Based Deduplication"
+    description: |
+      Detect identical capsules via cryptographic hashes/signatures
+      and avoid recompilation or duplicate deployment.
+    benefit: "Avoids recompiling identical capsules, saving build time and storage"
+    enabled: true
+
+
+# --- Performance Benchmark Expectations ---
+
+performance_benchmarks:
+  - optimization: "Symbolic Constant Folding"
+    expected_gain: "10–20%"
+    notes: "Precomputes DG expressions to reduce runtime cost"
+
+  - optimization: "Capsule Pruning"
+    expected_gain: "5–15%"
+    notes: "Removes dead code, improves cache locality"
+
+  - optimization: "Opcode Density Profiling"
+    expected_gain: "10–30%"
+    notes: "Enables hotspot-driven tuning"
+
+  - optimization: "Inline Function Expansion"
+    expected_gain: "5–20%"
+    notes: "Inlines fn blocks to reduce call overhead"
+
+  - optimization: "Thread Scheduling Optimization"
+    expected_gain: "2×–4×"
+    notes: "Balances workload to improve CPU core utilization"
+
+  - optimization: "Entropy-Aware Execution"
+    expected_gain: "Indirect"
+    notes: "Improves dispatch predictability and trace overlays"
+
+
+# --- Integration Notes ---
+
+# These optimizations align with QuarterLang's symbolic, introspective,
+# and capsule-centric philosophy. They enable:
+
+# - Capsule health metrics tracking (entropy, memory usage)
+# - Opcode trace overlays and visualization
+# - Deterministic replay and rewind debugging
+# - Aggressive static and dynamic code optimization
+
+# The compiler's optimization pipeline should support toggling these passes,
+# enable detailed logging for diagnostics, and interoperate with
+# REPL and runtime monitoring tools.
+
+# This completes the ruleset augmentation for compiler optimizations.
+
