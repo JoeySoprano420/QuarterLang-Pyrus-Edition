@@ -1,0 +1,233 @@
+# ============================================================
+# QuarterLang – Pyrus Edition
+# Unified Parsing, Capsule Meta‑System & Optimization Spec
+# Version: 1.0     Author: [Your Name]     Date: 2025‑08‑01
+# ============================================================
+
+# === LEXER DEFINITIONS ===
+
+TOKEN_STAR        = 'star'
+TOKEN_END         = 'end'
+TOKEN_VAL         = 'val'
+TOKEN_VAR         = 'var'
+TOKEN_DERIVE      = 'derive'
+TOKEN_DG          = 'dg'
+TOKEN_SAY         = 'say'
+TOKEN_LOOP        = 'loop'
+TOKEN_WHEN        = 'when'
+TOKEN_ELSE        = 'else'
+TOKEN_MATCH       = 'match'
+TOKEN_CASE        = 'case'
+TOKEN_DEFINE      = 'define'
+TOKEN_PROCEDURE   = 'procedure'
+TOKEN_RETURN      = 'return'
+TOKEN_YIELD       = 'yield'
+TOKEN_FN          = 'fn'
+TOKEN_THREAD      = 'thread'
+TOKEN_PIPE        = 'pipe'
+TOKEN_NEST        = 'nest'
+TOKEN_ASM         = 'asm'
+TOKEN_STOP        = 'stop'
+
+TOKEN_INT         = 'int'
+TOKEN_FLOAT       = 'float'
+TOKEN_BOOL        = 'bool'
+TOKEN_STRING      = 'string'
+TOKEN_DG_TYPE     = 'dg'
+
+TOKEN_INT_LITERAL    = /-?\d+/
+TOKEN_FLOAT_LITERAL  = /-?\d+\.\d+/
+TOKEN_BOOL_LITERAL   = 'true' | 'false'
+TOKEN_STRING_LITERAL = /"([^"\\]|\\.)*"/
+TOKEN_DG_LITERAL     = /dg:[0-9A-B]+/i
+TOKEN_IDENTIFIER     = /[A-Za-z_][A-Za-z0-9_]*/
+
+TOKEN_COLON      = ':'
+TOKEN_COMMA      = ','
+TOKEN_LPAREN     = '('
+TOKEN_RPAREN     = ')'
+TOKEN_LBRACE     = '{'
+TOKEN_RBRACE     = '}'
+TOKEN_ARROW      = '->'
+TOKEN_ASSIGN     = ':='
+TOKEN_PLUS       = '+'
+TOKEN_MINUS      = '-'
+TOKEN_MULTIPLY   = '*'
+TOKEN_DIVIDE     = '/'
+TOKEN_GREATER    = '>'
+TOKEN_LESS       = '<'
+TOKEN_EQUAL      = '=='
+TOKEN_NOT_EQUAL  = '!='
+
+TOKEN_COMMENT   = /#.*$/
+
+# === GRAMMAR DEFINITIONS ===
+
+START: program ;
+
+program: TOKEN_STAR block_body TOKEN_END ;
+block_body: statement* ;
+
+statement:
+      val_decl
+    | var_decl
+    | derive_stmt
+    | say_stmt
+    | loop_stmt
+    | when_stmt
+    | match_stmt
+    | func_decl
+    | procedure_decl
+    | return_stmt
+    | yield_stmt
+    | fn_expr
+    | thread_stmt
+    | pipe_stmt
+    | nest_stmt
+    | asm_stmt
+    | stop_stmt
+    | expr_stmt
+    ;
+
+val_decl: TOKEN_VAL TOKEN_IDENTIFIER 'as' type TOKEN_COLON expr ;
+var_decl: TOKEN_VAR TOKEN_IDENTIFIER 'as' type TOKEN_COLON expr ;
+derive_stmt: TOKEN_DERIVE TOKEN_IDENTIFIER 'from' TOKEN_IDENTIFIER 'by' expr ;
+say_stmt: TOKEN_SAY expr ;
+loop_stmt: TOKEN_LOOP 'from' expr 'to' expr TOKEN_COLON block_body TOKEN_END? ;
+when_stmt: TOKEN_WHEN expr TOKEN_COLON block_body (TOKEN_ELSE TOKEN_COLON block_body)? ;
+match_stmt: TOKEN_MATCH expr TOKEN_COLON match_cases ;
+match_cases: case_stmt+ ;
+case_stmt: TOKEN_CASE pattern TOKEN_COLON block_body ;
+
+func_decl: TOKEN_DEFINE TOKEN_IDENTIFIER '(' param_list? ')' (':' type)? block_body TOKEN_END ;
+procedure_decl: TOKEN_PROCEDURE TOKEN_IDENTIFIER '(' param_list? ')' block_body TOKEN_END ;
+return_stmt: TOKEN_RETURN expr? ;
+yield_stmt: TOKEN_YIELD expr ;
+fn_expr: TOKEN_FN '(' param_list? ')' (':' type)? block_body TOKEN_END ;
+thread_stmt: TOKEN_THREAD TOKEN_IDENTIFIER? '(' ')' block_body TOKEN_END ;
+pipe_stmt: TOKEN_PIPE 'write:' expr ;
+nest_stmt: TOKEN_NEST block_body TOKEN_END ;
+asm_stmt: TOKEN_ASM '{' asm_body '}' ;
+stop_stmt: TOKEN_STOP ;
+expr_stmt: expr ;
+
+param_list: param (TOKEN_COMMA param)* ;
+param: TOKEN_IDENTIFIER 'as' type ;
+
+type: TOKEN_INT | TOKEN_FLOAT | TOKEN_BOOL | TOKEN_STRING | TOKEN_DG_TYPE ;
+
+pattern:
+      TOKEN_INT_LITERAL
+    | TOKEN_BOOL_LITERAL
+    | TOKEN_IDENTIFIER
+    | '(' pattern (TOKEN_COMMA pattern)* ')'
+    ;
+
+expr:
+      literal
+    | TOKEN_IDENTIFIER
+    | expr binary_op expr
+    | unary_op expr
+    | '(' expr ')'
+    | fn_expr
+    ;
+
+literal:
+      TOKEN_INT_LITERAL
+    | TOKEN_FLOAT_LITERAL
+    | TOKEN_BOOL_LITERAL
+    | TOKEN_STRING_LITERAL
+    | TOKEN_DG_LITERAL
+    ;
+
+binary_op: TOKEN_PLUS | TOKEN_MINUS | TOKEN_MULTIPLY | TOKEN_DIVIDE 
+         | TOKEN_GREATER | TOKEN_LESS | TOKEN_EQUAL | TOKEN_NOT_EQUAL ;
+unary_op: TOKEN_PLUS | TOKEN_MINUS ;
+
+asm_body: /(.|\n)*?/ ;
+
+# === DG SEMANTICS ===
+# DG literals parsed as base‑12 (0‑9, A=10, B=11); built‑ins: to_dg, from_dg, dg_add, dg_mul
+
+# === OPTIMIZATION PASSES ===
+
+optimization:
+  - name: "Symbolic Constant Folding"            enabled: true
+  - name: "Capsule Pruning"                       enabled: true
+  - name: "Opcode Density Profiling"              enabled: true
+  - name: "Entropy-Aware Execution"               enabled: true
+  - name: "Inline Function Expansion"             enabled: true
+  - name: "Thread Scheduling Optimization"        enabled: true
+  - name: "DG Arithmetic Simplification"          enabled: true
+  - name: "REPL Trace Caching"                    enabled: true
+  - name: "Signature-Based Deduplication"         enabled: true
+
+# === CAPSULE META & RULE SPEC ===
+
+import core::mathops, ioops from "core/corerules.qtr"
+export arith::extended, vector_ops, scale_loads
+
+namespace arith {
+  capsule base {
+    rule: ADD -> opcode: 0x01 {
+      latency: 1
+      debug: true
+      tags: [ "arith", "basic" ]
+    }
+    rule: SUB -> opcode: 0x02 {
+      latency: 1
+      energy: "low"
+    }
+    rule: DIV -> opcode: 0x04 {
+      latency: 3
+      energy: "medium"
+      debug: true
+    }
+  }
+
+  capsule extended extends base {
+    rule: ADD -> opcode: 0x81    # override
+    rule: MOD -> opcode: 0x09 {
+      latency: 2
+      tags: ["modulo", "arith"]
+    }
+  }
+}
+
+capsule<T: int> vector_ops(size: int) {
+  rule: VADD -> opcode: 0x10 + T {
+    latency: 1
+    tags: [ "vector", "add" ]
+  }
+  rule: VMUL -> opcode: 0x20 + T {
+    latency: 2
+    tags: [ "vector", "multiply" ]
+  }
+}
+
+on_before: ADD => log("⚙️ Performing ADD operation")
+on_after:  ADD => assert(result < 0xFFFFFFFF)
+on_before: DIV => log("⚠️ DIV: Ensure denominator ≠ 0")
+
+packet: LOAD_SEQ {
+  pattern: LOAD + OFFSET + REGS
+  emits: [ opcode: 0x70, length: 3 ]
+}
+
+macro: quick_add(a, b) => ADD a, b
+macro: safe_div(x, y) => if y != 0 { DIV x, y } else { MOV x, 0 }
+
+capsule scale_loads[0x10..0x1F] {
+  rule: LOADX[n] -> opcode: n + 0x10 {
+    latency: 1
+    tags: [ "scalable", "load" ]
+  }
+}
+
+rule: DG_TRACE -> traverse hexmap via "dgTableWalker.g4" {
+  debug: true
+  trace: true
+  tags: ["dg", "traverse"]
+}
+
+# === End of Full Canonical Specification ===
